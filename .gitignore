@@ -1,0 +1,32 @@
+# 依赖与构建产物（当前为纯静态单文件项目，预留）
+node_modules/
+dist/
+build/
+.cache/
+
+# 日志
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# 环境变量与本地配置
+.env
+.env.*
+!.env.example
+
+# 编辑器 / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# 临时文件
+*.tmp
+*.bak
