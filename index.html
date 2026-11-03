@@ -209,6 +209,7 @@ try {
         <button id="testAllBtn" class="btn primary">▶ 全部检测</button>
         <button id="stopBtn" class="btn" disabled>■ 停止</button>
         <button id="sortBtn" class="btn">排序：默认</button>
+        <button id="copyAllBtn" class="btn" disabled title="复制所有「可用」节点的前缀（按当前排序）">📋 复制可用节点</button>
         <button id="themeBtn" class="btn">🌗 跟随</button>
       </div>
     </div>
@@ -338,7 +339,7 @@ const get = url => state.get(url);
 const $ = id => document.getElementById(id);
 const rowsEl = $('rows'), statsEl = $('stats'), toastEl = $('toast');
 const targetInput = $('targetInput'), speedInput = $('speedInput'), ghUrlInput = $('ghUrl');
-const convertList = $('convertList'), stopBtn = $('stopBtn'), sortBtn = $('sortBtn');
+const convertList = $('convertList'), stopBtn = $('stopBtn'), sortBtn = $('sortBtn'), copyAllBtn = $('copyAllBtn');
 
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -665,6 +666,8 @@ function updateStats() {
     (okN ? `<span class="chip">平均延迟 ${Math.round(sum / okN)} ms</span>` : '') +
     (latest ? `<span class="chip">上次 ${timeStr(latest)}</span>` : '');
   stopBtn.disabled = activeControllers.size === 0;
+  copyAllBtn.disabled = ok === 0;
+  copyAllBtn.textContent = '📋 复制可用 (' + ok + ')';
 }
 
 let sortMode = localStorage.getItem('ghp_sort') === 'latency' ? 'latency' : 'default';
@@ -729,6 +732,15 @@ sortBtn.addEventListener('click', () => {
   sortMode = sortMode === 'latency' ? 'default' : 'latency';
   localStorage.setItem('ghp_sort', sortMode);
   reorderRows();
+});
+
+/* 一键复制所有「可用」节点前缀，按当前显示顺序（尊重排序模式） */
+copyAllBtn.addEventListener('click', () => {
+  const list = [...rowsEl.querySelectorAll('.row')]
+    .map(r => r.dataset.url)
+    .filter(u => get(u).status === 'ok');
+  if (!list.length) { showToast('暂无「可用」节点，请先检测'); return; }
+  copyText(list.join('\n'));
 });
 
 /* ---------- 主题切换：跟随浏览器 → 暗 → 亮 循环 ---------- */
