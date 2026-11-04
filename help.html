@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>使用说明 · GitHub 加速节点检测</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<style>
+:root {
+  color-scheme: dark;
+  --bg:#0b0f14; --card:#11161d; --card2:#161d26; --border:#232b36;
+  --text:#e6edf3; --muted:#93a1b0;
+  --green:#3fb950; --green-bg:rgba(63,185,80,.12);
+  --yellow:#d29922; --yellow-bg:rgba(210,153,34,.12);
+  --red:#f85149; --red-bg:rgba(248,81,73,.12);
+  --blue:#58a6ff; --blue-bg:rgba(88,166,255,.12);
+  --radius:12px;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg:#f6f8fa; --card:#ffffff; --card2:#f0f3f6; --border:#d0d7de;
+    --text:#1f2328; --muted:#59636e;
+    --green:#1a7f37; --green-bg:rgba(26,127,55,.1);
+    --yellow:#9a6700; --yellow-bg:rgba(154,103,0,.12);
+    --red:#cf222e; --red-bg:rgba(207,34,46,.1);
+    --blue:#0969da; --blue-bg:rgba(9,105,218,.1);
+  }
+}
+* { box-sizing:border-box; }
+html { scrollbar-color: var(--muted) var(--bg); }
+body {
+  margin:0; color:var(--text);
+  background: radial-gradient(1200px 500px at 50% -120px, rgba(88,166,255,.08) 0%, transparent 60%) var(--bg);
+  font:14px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+}
+.wrap { max-width: 860px; margin:0 auto; padding:34px 20px 70px; }
+a { color:var(--blue); text-decoration:none; }
+a:hover { text-decoration:underline; }
+h1 { font-size:22px; margin:0; }
+h2 { font-size:17px; margin:34px 0 10px; padding-top:18px; border-top:1px solid var(--border); }
+h2:first-of-type { border-top:none; padding-top:0; margin-top:22px; }
+h3 { font-size:14.5px; margin:18px 0 6px; }
+p { margin:8px 0; }
+ul, ol { margin:8px 0; padding-left:22px; }
+li { margin:4px 0; }
+code {
+  background:var(--card2); border:1px solid var(--border); border-radius:6px;
+  padding:1px 6px; font-size:12.5px; word-break:break-all;
+  font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+}
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.btn {
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--card2); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; padding:7px 16px; font-size:13px; cursor:pointer; text-decoration:none; transition:.15s;
+}
+.btn:hover { border-color:var(--muted); text-decoration:none; }
+.card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 20px; margin:14px 0;
+}
+.status { display:inline-flex; align-items:center; gap:7px; font-weight:600; }
+.status::before { content:''; width:8px; height:8px; border-radius:50%; flex:none; }
+.status.ok::before { background:var(--green); } .status.ok { color:var(--green); }
+.status.warn::before { background:var(--yellow); } .status.warn { color:var(--yellow); }
+.status.err::before { background:var(--red); } .status.err { color:var(--red); }
+table { border-collapse:collapse; width:100%; margin:10px 0; font-size:13px; }
+th, td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+th { background:var(--card2); font-weight:600; white-space:nowrap; }
+details {
+  background:var(--card); border:1px solid var(--border); border-radius:10px;
+  padding:12px 16px; margin:10px 0;
+}
+details summary { cursor:pointer; font-weight:600; }
+details[open] summary { margin-bottom:8px; }
+.kbd { white-space:nowrap; }
+.muted { color:var(--muted); font-size:12.5px; }
+footer { margin-top:40px; color:var(--muted); font-size:12.5px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <h1>⚡ 使用说明</h1>
+    <a class="btn" href="index.html">← 返回检测页</a>
+  </div>
+  <p class="muted">本页说明「GitHub 加速节点检测」工具的全部功能与常见问题。</p>
+
+  <h2>🚀 快速上手</h2>
+  <ol>
+    <li>打开检测页（<code>index.html</code>），页面会<strong>自动检测</strong>全部 33 个加速节点；也可点击「▶ 全部检测」手动触发。</li>
+    <li>看状态列：<span class="status ok">可用</span> 的节点可放心使用；「延迟」列数值越小越快。</li>
+    <li>需要下载 GitHub 资源时，把「加速前缀」拼在原始链接前，或使用页面底部的<strong>链接加速转换</strong>直接生成。</li>
+  </ol>
+  <div class="card">
+    <p><b>加速链接的基本公式：</b><code>加速前缀 + 完整 GitHub 链接</code></p>
+    <p>例如原始链接为 <code>https://github.com/git/git/archive/refs/tags/v2.43.0.tar.gz</code>，<br>
+    加速链接即 <code>https://ghfast.top/https://github.com/git/git/archive/refs/tags/v2.43.0.tar.gz</code></p>
+    <p class="muted">更多支持的链接类型（Releases / Raw / Archive / Blob / Gist / clone 等）见
+    <a href="https://gh-proxy.com/docs/github-accelerator" target="_blank" rel="noopener">gh-proxy 官方文档</a>。</p>
+  </div>
+
+  <h2>🔍 检测原理与状态说明</h2>
+  <p>浏览器直接请求 <code>代理地址 + 目标文件</code>（默认拉取 <code>github/gitignore</code> 仓库的 README）：</p>
+  <ol>
+    <li>先发<strong>带 CORS</strong> 的请求 —— 能读取 HTTP 状态码并校验文件内容；</li>
+    <li>若被 CORS 拦截，退回 <strong>no-cors</strong> 探测 —— 只能确认服务器是否可达。</li>
+  </ol>
+  <table>
+    <tr><th>状态</th><th>含义</th><th>建议</th></tr>
+    <tr>
+      <td><span class="status ok">可用</span></td>
+      <td>代理返回 2xx 且内容校验通过，完全验证</td>
+      <td>放心使用</td>
+    </tr>
+    <tr>
+      <td><span class="status warn">可达</span></td>
+      <td>服务器有响应，但未开启 CORS，浏览器内无法验证代理内容</td>
+      <td>并非不可用！请在下载工具中实际验证</td>
+    </tr>
+    <tr>
+      <td><span class="status err">HTTP xxx</span></td>
+      <td>代理返回了错误状态码（404 / 429 等），原因见该节点</td>
+      <td>可稍后重试或换节点</td>
+    </tr>
+    <tr>
+      <td><span class="status err">不可用</span></td>
+      <td>DNS 解析失败 / 连接失败 / 超时</td>
+      <td>当前网络下无法使用</td>
+    </tr>
+  </table>
+
+  <h2>🧩 节点分组：前缀型 与 替换型</h2>
+  <p>两类节点的<strong>用法不同</strong>，页面按此分组展示：</p>
+  <h3>① GhProxy 前缀型（32 个）</h3>
+  <p>在原链接<strong>前面拼接前缀</strong>：</p>
+  <ul>
+    <li>下载：<code>https://ghfast.top/https://github.com/owner/repo/releases/download/…</code></li>
+    <li>克隆：<code>git clone https://ghfast.top/https://github.com/owner/repo.git</code></li>
+  </ul>
+  <h3>② 域名替换型（1 个：xget.xi-xu.me/gh）</h3>
+  <p>把链接中的 <code>github.com</code> <strong>替换</strong>为镜像域名：</p>
+  <ul>
+    <li><code>https://github.com/owner/repo/...</code> → <code>https://xget.xi-xu.me/gh/owner/repo/...</code></li>
+  </ul>
+  <p class="muted">页面的「链接加速转换」会对两类节点自动采用正确的拼接方式，无需手动区分；逐行「复制前缀」时请注意替换型节点需自行替换域名。</p>
+
+  <h2>🛠 界面功能一览</h2>
+  <table>
+    <tr><th>位置</th><th>控件</th><th>说明</th></tr>
+    <tr><td rowspan="4">表格工具栏</td><td>分组：全部 / 前缀型 / 替换型</td><td>按分组过滤列表；「检测」「复制可用」与统计信息都跟随当前过滤</td></tr>
+    <tr><td>▶ 全部检测 / 检测本组</td><td>过滤到具体分组时自动变为「检测本组」，只重测该组节点</td></tr>
+    <tr><td>■ 停止</td><td>中止所有进行中的检测与测速</td></tr>
+    <tr><td>排序：默认 / 延迟</td><td>默认 = 顶级域字母序 → 域名字母序；延迟 = 各分组内按延迟升序</td></tr>
+    <tr><td rowspan="4">每行操作</td><td>测速</td><td>流式下载固定文件（最长 20 秒），显示平均速度；需节点开启 CORS</td></tr>
+    <tr><td>复制前缀</td><td>复制该节点的加速前缀</td></tr>
+    <tr><td>↻</td><td>仅重测该节点</td></tr>
+    <tr><td>↗</td><td>新标签页打开节点站点</td></tr>
+    <tr><td rowspan="2">页头</td><td>⚙️ 配置</td><td>弹窗内修改「检测目标」与「测速文件」；保存生效，取消 / ESC / 点击遮罩还原</td></tr>
+    <tr><td>🌗 跟随</td><td>主题三态循环：跟随浏览器 → 暗色 → 亮色（选择会记住）</td></tr>
+    <tr><td>页面底部</td><td>链接加速转换</td><td>粘贴 GitHub 链接，按延迟生成当前可用节点的加速链接，一键复制</td></tr>
+  </table>
+
+  <h2>⚙️ 检测目标与测速文件</h2>
+  <ul>
+    <li><b>检测目标</b>：默认为 <code>github/gitignore</code> 仓库的 README。换成你要下载的实际文件，测出的可用性更贴近真实场景。</li>
+    <li><b>测速文件</b>：默认为 git 仓库 v2.43.0 的源码归档（几 MB，不可变）。文件越大测速越稳定，最多取 20 秒。</li>
+    <li>两项均支持任意 http(s) 地址，保存在浏览器本地。</li>
+  </ul>
+
+  <h2>❓ 常见问题</h2>
+  <details>
+    <summary>「可达」的节点能用吗？为什么不算「可用」？</summary>
+    <p>能。这些节点只是<strong>没有开启 CORS 响应头</strong>，浏览器出于安全策略不允许页面读取响应内容，所以无法自动验证。用 curl / wget / 浏览器直接下载时不受 CORS 限制，实际多半可用。</p>
+  </details>
+  <details>
+    <summary>为什么有的节点显示 HTTP 404 或 429？</summary>
+    <p>404 通常是该节点不支持当前检测目标的路径格式（例如只代理 <code>github.com</code> 域名、不代理 raw 域名）；429 表示触发了节点限流。可以在 ⚙️ 配置里换一个检测目标再试。</p>
+  </details>
+  <details>
+    <summary>延迟 / 速度和我实际体验不一致？</summary>
+    <p>所有数据都是<strong>本机网络视角</strong>的一次采样：不同地区、运营商、时段结果不同；小文件延迟包含握手与首字节时间；测速受节点缓存影响（命中缓存会偏快）。建议多测几次取趋势。</p>
+  </details>
+  <details>
+    <summary>支持哪些 GitHub 链接类型？</summary>
+    <p>Releases 附件、源码归档（archive）、raw 文件、blob 页面自动转 raw、Gist、git clone 等，多数节点都支持；个别节点的支持范围以其自身实现为准。私有仓库不在公共节点支持范围内。</p>
+  </details>
+  <details>
+    <summary>怎么让 git 全局自动走加速？</summary>
+    <p>以 gh-proxy.org 为例（前缀型节点同理）：</p>
+    <p><code>git config --global url."https://gh-proxy.org/https://github.com/".insteadOf "https://github.com/"</code></p>
+    <p>取消时把 <code>--global</code> 换成 <code>--unset</code> 重复执行即可。</p>
+  </details>
+  <details>
+    <summary>节点列表是怎么来的？可以自己增删吗？</summary>
+    <p>收录自社区公开汇总（如 <a href="https://github.com/hunshcn/gh-proxy/issues/116" target="_blank" rel="noopener">hunshcn/gh-proxy#116</a>、<a href="https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js" target="_blank" rel="noopener">XIU2/UserScript 内置站点列表</a>），并经过连通性与内容双重核验。编辑 <code>index.html</code> 中的 <code>SERVICES</code> 数组即可增删；非前缀型节点需在 <code>NODE_TYPES</code> 标注类型。</p>
+  </details>
+  <details>
+    <summary>会收集我的数据吗？</summary>
+    <p>不会。纯静态单文件页面，无后端、无统计；所有配置只保存在你浏览器的 localStorage 里，检测请求由你的浏览器直接发往各节点。</p>
+  </details>
+
+  <h2>⚠️ 注意事项</h2>
+  <ul>
+    <li>公共加速节点仅供学习、科研与正常开源下载，请合理使用，勿滥用或用于违规内容。</li>
+    <li>公共节点时效性强，随时可能失效或更换域名，检测结果仅供参考。</li>
+    <li>仅加速公开资源，私有仓库需自建节点并配置凭据。</li>
+  </ul>
+
+  <footer>GitHub 加速节点检测 · <a href="index.html">返回检测页</a></footer>
+</div>
+</body>
+</html>

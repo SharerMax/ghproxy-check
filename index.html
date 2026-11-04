@@ -102,6 +102,7 @@ code {
 }
 .btn.primary:hover { background:rgba(63,185,80,.2); }
 .btn:disabled { opacity:.45; cursor:not-allowed; }
+a.btn, a.btn:hover { text-decoration:none; }
 .mini {
   background:transparent; border:1px solid var(--border); color:var(--muted);
   border-radius:6px; padding:3px 9px; font-size:12px; cursor:pointer; transition:.15s;
@@ -250,15 +251,12 @@ try {
     <div class="title-row">
       <h1>⚡ GitHub 加速节点检测</h1>
       <div class="actions">
+        <a class="btn" href="help.html" target="_blank" rel="noopener" title="使用说明">❓ 帮助</a>
         <button id="configBtn" class="btn" title="配置检测目标与测速文件">⚙️ 配置</button>
         <button id="themeBtn" class="btn">🌗 跟随</button>
       </div>
     </div>
-    <p class="sub">
-      为每个加速节点尝试拉取同一份 GitHub 文件，检测 <b>连通性 · 延迟 · 下载速度</b>。
-      用法：<code>加速前缀 + 原始 GitHub 链接</code>，参考
-      <a href="https://gh-proxy.com/docs/github-accelerator" target="_blank" rel="noopener">gh-proxy 官方文档</a>
-    </p>
+    <p class="sub">为每个加速节点尝试拉取同一份 GitHub 文件，检测 <b>连通性 · 延迟 · 下载速度</b>。</p>
   </header>
 
   <section class="card">
@@ -335,42 +333,59 @@ try {
 
 /* ================= 配置 ================= */
 
+/* 默认顺序：顶级域（TLD）字母序 → 域名（层级结构）字母序 */
 const SERVICES = [
-  'https://ghm.078465.xyz/',
-  'https://github.geekery.cn/',
-  'https://gh.catmak.name/',
-  'https://hub.glowp.xyz/',
-  'https://gh.monlor.com/',
-  'https://g.blfrp.cn/',
-  'https://ghfast.top/',
-  'https://gh-proxy.org/',
-  'https://proxy.gitwarp.top/',
+  /* .cc */
   'https://fastgit.cc/',
-  'https://gh.zwy.one/',
-  'https://wget.la/',
-  'https://gh.dpik.top/',
-  'https://github.boki.moe/',
-  'https://github.ednovas.xyz/',
+  /* .cn */
+  'https://g.blfrp.cn/',
+  'https://github.geekery.cn/',
+  /* .com */
+  'https://cdn.crashmc.com/',
+  'https://gh-proxy.com/',         // gh-proxy 官方文档站同款服务
   'https://gh.chjina.com/',
-  'https://git.yylx.win/',
-  /* —— 2026-11 新增：来源 hunshcn/gh-proxy#116 社区汇总等，经连通性 + 内容核验筛选 —— */
-  'https://gh-proxy.com/',        // gh-proxy 官方文档站同款服务
-  'https://gh-proxy.net/',
-  'https://ghproxy.vip/',
-  'https://gh.404cafe.fun/',
-  'https://tvv.tw/',
-  'https://gh.noki.eu.org/',
-  'https://gh.noki.icu/',
-  'https://github.xxlab.tech/',
+  'https://gh.monlor.com/',
   'https://gh.sixyin.com/',
-  'https://gh.ddlc.top/',         // 当前限流中，页面会显示 HTTP 429
-  /* —— 2026-11-05 新增：来源 XIU2/UserScript「GithubEnhanced-High-Speed-Download」站点列表 —— */
-  'https://ghpxy.hwinzniej.top/',
+  /* .fun */
+  'https://gh.404cafe.fun/',
+  /* .icu */
+  'https://gh.noki.icu/',
+  /* .it */
+  'https://ghproxy.it/',
+  /* .la */
+  'https://wget.la/',
+  /* .me */
+  'https://xget.xi-xu.me/gh/',     // Xget：域名替换型（分组见 NODE_TYPES，格式见 PATH_MODE）
+  /* .moe */
+  'https://github.boki.moe/',
+  /* .name */
+  'https://gh.catmak.name/',
+  /* .net */
+  'https://gh-proxy.net/',
+  /* .org */
   'https://cdn.gh-proxy.org/',     // gh-proxy.com 的 Fastly CDN 分流
   'https://edgeone.gh-proxy.org/', // gh-proxy.com 的 EdgeOne 分流
-  'https://cdn.crashmc.com/',
-  'https://ghproxy.it/',
-  'https://xget.xi-xu.me/gh/',     // Xget：域名替换型（分组见 NODE_TYPES，格式见 PATH_MODE）
+  'https://gh-proxy.org/',
+  'https://gh.noki.eu.org/',
+  /* .tech */
+  'https://github.xxlab.tech/',
+  /* .top */
+  'https://gh.ddlc.top/',
+  'https://gh.dpik.top/',
+  'https://ghfast.top/',
+  'https://ghpxy.hwinzniej.top/',
+  'https://proxy.gitwarp.top/',
+  /* .tw */
+  'https://gh.zwy.one/',
+  'https://tvv.tw/',
+  /* .vip */
+  'https://ghproxy.vip/',
+  /* .win */
+  'https://git.yylx.win/',
+  /* .xyz */
+  'https://ghm.078465.xyz/',
+  'https://github.ednovas.xyz/',
+  'https://hub.glowp.xyz/',
 ];
 
 /* 节点分组：prefix = 前缀拼接型（ghproxy）；replace = 域名替换型；other = 其它

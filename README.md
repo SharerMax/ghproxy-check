@@ -33,7 +33,7 @@
 
 ## 🚀 使用
 
-无需构建，任选其一：
+无需构建，任选其一（📘 完整使用说明见 [help.html](help.html)，或点击检测页头部「❓ 帮助」）：
 
 ```bash
 # 直接用浏览器打开
@@ -53,30 +53,32 @@ python -m http.server 8642
 
 | # | 节点 | # | 节点 |
 |---|---|---|---|
-| 1 | `https://ghm.078465.xyz/` | 15 | `https://github.boki.moe/` |
-| 2 | `https://github.geekery.cn/` | 16 | `https://gh.chjina.com/` |
-| 3 | `https://gh.catmak.name/` | 17 | `https://git.yylx.win/` |
-| 4 | `https://hub.glowp.xyz/` | 18 | `https://gh-proxy.com/` |
-| 5 | `https://gh.monlor.com/` | 19 | `https://gh-proxy.net/` |
-| 6 | `https://g.blfrp.cn/` | 20 | `https://ghproxy.vip/` |
-| 7 | `https://ghfast.top/` | 21 | `https://gh.404cafe.fun/` |
-| 8 | `https://gh-proxy.org/` | 22 | `https://tvv.tw/` |
-| 9 | `https://proxy.gitwarp.top/` | 23 | `https://gh.noki.eu.org/` |
-| 10 | `https://fastgit.cc/` | 24 | `https://gh.noki.icu/` |
-| 11 | `https://gh.zwy.one/` | 25 | `https://github.xxlab.tech/` |
-| 12 | `https://wget.la/` | 26 | `https://gh.sixyin.com/` |
-| 13 | `https://gh.dpik.top/` | 27 | `https://gh.ddlc.top/` |
-| 14 | `https://github.ednovas.xyz/` | 28 | `https://ghpxy.hwinzniej.top/` |
-| 29 | `https://cdn.gh-proxy.org/` | 30 | `https://edgeone.gh-proxy.org/` |
-| 31 | `https://cdn.crashmc.com/` | 32 | `https://ghproxy.it/` |
-| 33 | `https://xget.xi-xu.me/gh/` | | |
+| 1 | `https://fastgit.cc/` | 2 | `https://g.blfrp.cn/` |
+| 3 | `https://github.geekery.cn/` | 4 | `https://cdn.crashmc.com/` |
+| 5 | `https://gh-proxy.com/` | 6 | `https://gh.chjina.com/` |
+| 7 | `https://gh.monlor.com/` | 8 | `https://gh.sixyin.com/` |
+| 9 | `https://gh.404cafe.fun/` | 10 | `https://gh.noki.icu/` |
+| 11 | `https://ghproxy.it/` | 12 | `https://wget.la/` |
+| 13 | `https://xget.xi-xu.me/gh/` | 14 | `https://github.boki.moe/` |
+| 15 | `https://gh.catmak.name/` | 16 | `https://gh-proxy.net/` |
+| 17 | `https://cdn.gh-proxy.org/` | 18 | `https://edgeone.gh-proxy.org/` |
+| 19 | `https://gh-proxy.org/` | 20 | `https://gh.noki.eu.org/` |
+| 21 | `https://github.xxlab.tech/` | 22 | `https://gh.ddlc.top/` |
+| 23 | `https://gh.dpik.top/` | 24 | `https://ghfast.top/` |
+| 25 | `https://ghpxy.hwinzniej.top/` | 26 | `https://proxy.gitwarp.top/` |
+| 27 | `https://gh.zwy.one/` | 28 | `https://tvv.tw/` |
+| 29 | `https://ghproxy.vip/` | 30 | `https://git.yylx.win/` |
+| 31 | `https://ghm.078465.xyz/` | 32 | `https://github.ednovas.xyz/` |
+| 33 | `https://hub.glowp.xyz/` | | |
+
+节点默认按**顶级域（TLD）字母序 → 域名（层级结构）字母序**排列；分组优先于排序，每组内部独立排序，「按延迟」排序同理。
 
 </details>
 
 **节点分组**（页面按此分组展示，组内按延迟排序）：
 
-- **GhProxy 前缀型**（#1–32）：在原链接前加前缀，即 `前缀 + 完整 GitHub 链接`
-- **域名替换型**（#33 `xget.xi-xu.me/gh`）：把 `github.com` 替换为镜像域名（如 `xget.xi-xu.me/gh/owner/repo/...`），raw 链接页面会自动转换
+- **GhProxy 前缀型**（32 个）：在原链接前加前缀，即 `前缀 + 完整 GitHub 链接`
+- **域名替换型**（#13 `xget.xi-xu.me/gh`，1 个）：把 `github.com` 替换为镜像域名（如 `xget.xi-xu.me/gh/owner/repo/...`），raw 链接页面会自动转换
 - **其它**：非上述两种用法的节点（当前为空，新增时自动归入）
 
 节点收录自社区公开汇总（如 [hunshcn/gh-proxy#116](https://github.com/hunshcn/gh-proxy/issues/116)、[XIU2/UserScript 内置站点列表](https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js)）并经连通性与内容双重核验。公共节点时效性强，如需增删请编辑 `index.html` 中的 `SERVICES` 数组；非前缀型节点需同时在 `NODE_TYPES` 中标注类型，未标注默认归入前缀型。
