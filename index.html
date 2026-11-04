@@ -76,14 +76,20 @@ code {
 .title-row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .actions { display:flex; gap:8px; flex-wrap:wrap; }
 .sub { color:var(--muted); margin:8px 0 0; }
-.stats { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 4px; }
-.chip {
-  background:var(--card2); border:1px solid var(--border); color:var(--muted);
-  border-radius:99px; padding:3px 12px; font-size:12.5px; font-variant-numeric:tabular-nums;
+.stats {
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  margin:0 8px 12px; padding-top:10px; border-top:1px solid var(--border);
 }
-.chip.ok   { color:var(--green);  border-color:rgba(63,185,80,.4);  background:var(--green-bg); }
-.chip.warn { color:var(--yellow); border-color:rgba(210,153,34,.4); background:var(--yellow-bg); }
-.chip.err  { color:var(--red);    border-color:rgba(248,81,73,.4);  background:var(--red-bg); }
+/* 状态芯片：圆点图例样式，明确为只读状态而非按钮 */
+.chip {
+  display:inline-flex; align-items:center; gap:7px;
+  color:var(--text); font-size:12.5px; font-variant-numeric:tabular-nums;
+  background:none; border:none; padding:0;
+}
+.chip::before { content:''; width:8px; height:8px; border-radius:50%; background:var(--muted); flex:none; }
+.chip.ok::before   { background:var(--green); }
+.chip.warn::before { background:var(--yellow); }
+.chip.err::before  { background:var(--red); }
 
 /* ---------- buttons / inputs ---------- */
 .btn {
@@ -125,6 +131,33 @@ a.mini { display:inline-block; }
 }
 .row:hover { background:var(--row-hover); }
 .thead { color:var(--muted); font-size:12px; border-top:none; padding-bottom:8px; user-select:none; }
+.group-row {
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  padding:11px 8px 7px; border-top:1px solid var(--border); background:var(--card2);
+}
+#rows .group-row:first-child { border-top:none; }
+.group-row .g-name { font-weight:700; font-size:13px; }
+.group-row .g-count { color:var(--muted); font-size:12px; white-space:nowrap; }
+.group-row .g-usage { color:var(--muted); font-size:12px; margin-left:auto; text-align:right; }
+
+/* ---------- 分组过滤 ---------- */
+.toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:0 8px 12px; }
+.toolbar-actions { display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; }
+/* 工具栏内控件统一为 32px 高、12.5px 字号 */
+.toolbar .btn { height:32px; padding:0 14px; font-size:12.5px; display:inline-flex; align-items:center; }
+.filter-bar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.filter-bar .f-label { color:var(--muted); font-size:12.5px; }
+.filter-bar label {
+  display:inline-flex; align-items:center; gap:6px;
+  border:1px solid var(--border); border-radius:99px; padding:0 13px; height:32px;
+  font-size:12.5px; color:var(--muted); cursor:pointer; user-select:none; transition:.15s;
+}
+.filter-bar label:hover { color:var(--text); border-color:var(--hover-border); }
+.filter-bar label:has(input:checked) {
+  color:var(--blue); border-color:rgba(88,166,255,.45); background:var(--blue-bg); font-weight:600;
+}
+.filter-bar input { position:absolute; opacity:0; pointer-events:none; }
+.filter-bar b { font-weight:600; font-variant-numeric:tabular-nums; }
 .badge {
   display:inline-flex; align-items:center; gap:6px; border-radius:99px;
   padding:2px 10px; font-size:12px; font-weight:600; white-space:nowrap;
@@ -206,10 +239,6 @@ try {
     <div class="title-row">
       <h1>⚡ GitHub 加速节点检测</h1>
       <div class="actions">
-        <button id="testAllBtn" class="btn primary">▶ 全部检测</button>
-        <button id="stopBtn" class="btn" disabled>■ 停止</button>
-        <button id="sortBtn" class="btn">排序：默认</button>
-        <button id="copyAllBtn" class="btn" disabled title="复制所有「可用」节点的前缀（按当前排序）">📋 复制可用节点</button>
         <button id="themeBtn" class="btn">🌗 跟随</button>
       </div>
     </div>
@@ -218,7 +247,6 @@ try {
       用法：<code>加速前缀 + 原始 GitHub 链接</code>，参考
       <a href="https://gh-proxy.com/docs/github-accelerator" target="_blank" rel="noopener">gh-proxy 官方文档</a>
     </p>
-    <div class="stats" id="stats"></div>
   </header>
 
   <section class="card config">
@@ -239,6 +267,18 @@ try {
   </section>
 
   <section class="card">
+    <div class="toolbar">
+      <div class="filter-bar" id="typeFilter" role="radiogroup" aria-label="按节点分组过滤">
+        <span class="f-label">分组：</span>
+      </div>
+      <div class="toolbar-actions">
+        <button id="testAllBtn" class="btn primary">▶ 全部检测</button>
+        <button id="stopBtn" class="btn" disabled>■ 停止</button>
+        <button id="sortBtn" class="btn">排序：默认</button>
+        <button id="copyAllBtn" class="btn" disabled title="复制当前可见的「可用」节点前缀（按当前排序与过滤）">📋 复制可用节点</button>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
     <div class="row thead">
       <div class="cell c-status">状态</div>
       <div class="cell c-host">节点</div>
@@ -308,7 +348,38 @@ const SERVICES = [
   'https://github.xxlab.tech/',
   'https://gh.sixyin.com/',
   'https://gh.ddlc.top/',         // 当前限流中，页面会显示 HTTP 429
+  /* —— 2026-11-05 新增：来源 XIU2/UserScript「GithubEnhanced-High-Speed-Download」站点列表 —— */
+  'https://ghpxy.hwinzniej.top/',
+  'https://cdn.gh-proxy.org/',     // gh-proxy.com 的 Fastly CDN 分流
+  'https://edgeone.gh-proxy.org/', // gh-proxy.com 的 EdgeOne 分流
+  'https://cdn.crashmc.com/',
+  'https://ghproxy.it/',
+  'https://xget.xi-xu.me/gh/',     // Xget：域名替换型（分组见 NODE_TYPES，格式见 PATH_MODE）
 ];
+
+/* 节点分组：prefix = 前缀拼接型（ghproxy）；replace = 域名替换型；other = 其它
+   未登记的节点默认归入 prefix */
+const NODE_TYPES = {
+  'https://xget.xi-xu.me/gh/': 'replace',
+};
+function serviceType(url) { return NODE_TYPES[url] || 'prefix'; }
+
+const GROUP_META = [
+  { type: 'prefix',  name: 'GhProxy 前缀型', usage: '在原链接前加前缀：加速前缀 + 完整 GitHub 链接' },
+  { type: 'replace', name: '域名替换型',     usage: '把 github.com 替换为镜像域名，raw 链接自动转换' },
+  { type: 'other',   name: '其它',           usage: '其它类型的加速服务' },
+];
+
+/* 拼接格式：replace 型为 Xget 型路径映射，其余为「前缀 + 完整 URL」
+   Xget 规则：/gh/ + github.com 路径（去掉协议与域名）；
+   raw 域名需转换为 github.com 的 /raw/ 路径形式 */
+const PATH_MODE = new Set(Object.keys(NODE_TYPES));
+function buildProxied(service, target) {
+  if (!PATH_MODE.has(service)) return service + target;
+  return service + target
+    .replace(/^https?:\/\/github\.com\//, '')
+    .replace(/^https?:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\//, '$1/$2/raw/');
+}
 
 const DEFAULT_TARGET = 'https://raw.githubusercontent.com/github/gitignore/main/README.md';
 const DEFAULT_SPEED_TARGET = 'https://github.com/git/git/archive/refs/tags/v2.43.0.tar.gz';
@@ -358,6 +429,7 @@ function btn(cls, text, title) {
 SERVICES.forEach((url, i) => {
   const row = el('div', 'row');
   row.dataset.url = url;
+  row.dataset.type = serviceType(url);
 
   const badge = el('span', 'badge idle', '待检测');
   const cStatus = el('div', 'cell c-status');
@@ -365,7 +437,8 @@ SERVICES.forEach((url, i) => {
 
   const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
   const a = el('a', 'host', host);
-  a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.title = url;
+  a.href = url; a.target = '_blank'; a.rel = 'noopener';
+  a.title = serviceType(url) === 'replace' ? url + '（域名替换型：把 github.com 替换为本镜像）' : url;
   const cHost = el('div', 'cell c-host');
   cHost.appendChild(el('span', 'idx', String(i + 1).padStart(2, '0')));
   cHost.appendChild(a);
@@ -395,6 +468,20 @@ SERVICES.forEach((url, i) => {
 
   ui.set(url, { badge, lat, bar, code, speed, speedBtn });
 });
+
+/* 分组标题行（reorderRows 会把它们插到各自分组的最前面） */
+for (const g of GROUP_META) {
+  const n = SERVICES.filter(u => serviceType(u) === g.type).length;
+  if (!n) continue;
+  const h = el('div', 'group-row');
+  h.dataset.type = g.type;
+  h.append(
+    el('span', 'g-name', '▍' + g.name),
+    el('span', 'g-count', n + ' 个节点'),
+    el('span', 'g-usage', '用法：' + g.usage),
+  );
+  rowsEl.appendChild(h);
+}
 
 /* ================= 工具 ================= */
 
@@ -472,7 +559,7 @@ async function testService(url, target) {
 
   const ctrl = new AbortController();
   activeControllers.add(ctrl);
-  const proxied = url + target;
+  const proxied = buildProxied(url, target);
   const t0 = performance.now();
 
   try {
@@ -522,7 +609,11 @@ async function testService(url, target) {
 function testAll() {
   const target = getTarget();
   if (!target) return;
-  SERVICES.forEach(u => testService(u, target));
+  /* 联动分组过滤：过滤到具体分组时只检测本组 */
+  const scope = typeFilterValue === 'all'
+    ? SERVICES
+    : SERVICES.filter(u => serviceType(u) === typeFilterValue);
+  scope.forEach(u => testService(u, target));
 }
 
 function stopAll() {
@@ -553,7 +644,7 @@ async function speedTest(url) {
   const t0 = performance.now();
 
   try {
-    const resp = await fetch(url + t, { signal: ctrl.signal, cache: 'no-store', referrerPolicy: 'no-referrer' });
+    const resp = await fetch(buildProxied(url, t), { signal: ctrl.signal, cache: 'no-store', referrerPolicy: 'no-referrer' });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     if (!resp.body) throw new Error('浏览器不支持流式读取');
     const reader = resp.body.getReader();
@@ -648,8 +739,12 @@ function updateSpeedCell(url) {
 }
 
 function updateStats() {
+  /* 统计跟随当前分组过滤 */
+  const scope = typeFilterValue === 'all'
+    ? SERVICES
+    : SERVICES.filter(u => serviceType(u) === typeFilterValue);
   let ok = 0, reach = 0, fail = 0, pending = 0, okN = 0, sum = 0, latest = 0;
-  for (const s of SERVICES) {
+  for (const s of scope) {
     const st = get(s);
     if (st.status === 'ok') { ok++; okN++; sum += st.ms || 0; }
     else if (st.status === 'reachable') reach++;
@@ -658,7 +753,7 @@ function updateStats() {
     if (st.checkedAt > latest) latest = st.checkedAt;
   }
   statsEl.innerHTML =
-    `<span class="chip">节点 ${SERVICES.length}</span>` +
+    `<span class="chip">节点 ${scope.length}</span>` +
     `<span class="chip ok">可用 ${ok}</span>` +
     `<span class="chip warn">可达 ${reach}</span>` +
     (fail ? `<span class="chip err">异常 ${fail}</span>` : '') +
@@ -666,23 +761,35 @@ function updateStats() {
     (okN ? `<span class="chip">平均延迟 ${Math.round(sum / okN)} ms</span>` : '') +
     (latest ? `<span class="chip">上次 ${timeStr(latest)}</span>` : '');
   stopBtn.disabled = activeControllers.size === 0;
-  copyAllBtn.disabled = ok === 0;
-  copyAllBtn.textContent = '📋 复制可用 (' + ok + ')';
+  updateCopyBtn();
+}
+
+/* 复制按钮：数量与可用性跟随当前分组过滤 */
+function updateCopyBtn() {
+  const n = SERVICES.filter(u =>
+    (typeFilterValue === 'all' || serviceType(u) === typeFilterValue) &&
+    get(u).status === 'ok').length;
+  copyAllBtn.textContent = '📋 复制可用 (' + n + ')';
+  copyAllBtn.disabled = n === 0;
 }
 
 let sortMode = localStorage.getItem('ghp_sort') === 'latency' ? 'latency' : 'default';
 
 function reorderRows() {
-  const rows = [...rowsEl.children];
-  if (sortMode === 'latency') {
+  /* 分组保持固定顺序，组内按当前排序模式排列 */
+  for (const g of GROUP_META) {
+    const head = rowsEl.querySelector(`.group-row[data-type="${g.type}"]`);
+    if (!head) continue;
+    const rows = [...rowsEl.querySelectorAll(`.row[data-type="${g.type}"]`)];
     rows.sort((x, y) => {
       const a = score(get(x.dataset.url)), b = score(get(y.dataset.url));
-      return a !== b ? a - b : SERVICES.indexOf(x.dataset.url) - SERVICES.indexOf(y.dataset.url);
+      return sortMode === 'latency' && a !== b
+        ? a - b
+        : SERVICES.indexOf(x.dataset.url) - SERVICES.indexOf(y.dataset.url);
     });
-  } else {
-    rows.sort((x, y) => SERVICES.indexOf(x.dataset.url) - SERVICES.indexOf(y.dataset.url));
+    rowsEl.appendChild(head);
+    rows.forEach(r => rowsEl.appendChild(r));
   }
-  rows.forEach(r => rowsEl.appendChild(r));
   sortBtn.textContent = sortMode === 'latency' ? '排序：延迟' : '排序：默认';
 }
 
@@ -712,7 +819,7 @@ function refreshConvert() {
     return;
   }
   convertList.innerHTML = usable.map(({ s, st }) => {
-    const conv = s + raw;
+    const conv = buildProxied(s, raw);
     const ms = st.ms != null ? Math.round(st.ms) + ' ms' : '';
     const warn = st.status === 'reachable' ? ' title="该节点未验证 CORS，实际可用性请自行确认"' : '';
     return `<div class="conv-row"${warn}>` +
@@ -734,13 +841,59 @@ sortBtn.addEventListener('click', () => {
   reorderRows();
 });
 
-/* 一键复制所有「可用」节点前缀，按当前显示顺序（尊重排序模式） */
+/* 一键复制所有「可用」节点前缀，按当前显示顺序（尊重排序与分组过滤） */
 copyAllBtn.addEventListener('click', () => {
   const list = [...rowsEl.querySelectorAll('.row')]
+    .filter(r => typeFilterValue === 'all' || r.dataset.type === typeFilterValue)
     .map(r => r.dataset.url)
     .filter(u => get(u).status === 'ok');
   if (!list.length) { showToast('暂无「可用」节点，请先检测'); return; }
   copyText(list.join('\n'));
+});
+
+/* ---------- 分组过滤单选 ---------- */
+const typeFilter = $('typeFilter');
+const FILTER_META = [
+  { v: 'all',     name: '全部',   count: () => SERVICES.length },
+  { v: 'prefix',  name: '前缀型', count: () => SERVICES.filter(u => serviceType(u) === 'prefix').length },
+  { v: 'replace', name: '替换型', count: () => SERVICES.filter(u => serviceType(u) === 'replace').length },
+  { v: 'other',   name: '其它',   count: () => SERVICES.filter(u => serviceType(u) === 'other').length },
+];
+let typeFilterValue = localStorage.getItem('ghp_filter') || 'all';
+
+for (const f of FILTER_META) {
+  const n = f.count();
+  if (!n) continue; // 空分组不提供选项
+  const label = el('label');
+  label.id = 'flt-' + f.v;
+  const input = document.createElement('input');
+  input.type = 'radio';
+  input.name = 'typeFilter';
+  input.value = f.v;
+  label.append(input, document.createTextNode(f.name + ' '), el('b', null, String(n)));
+  typeFilter.appendChild(label);
+}
+
+function applyTypeFilter() {
+  const valid = typeFilterValue === 'all' || FILTER_META.some(f => f.v === typeFilterValue && f.count() > 0);
+  if (!valid) typeFilterValue = 'all';
+  rowsEl.querySelectorAll('.group-row').forEach(h => {
+    h.style.display = (typeFilterValue === 'all' || h.dataset.type === typeFilterValue) ? '' : 'none';
+  });
+  rowsEl.querySelectorAll('.row').forEach(r => {
+    r.style.display = (typeFilterValue === 'all' || r.dataset.type === typeFilterValue) ? '' : 'none';
+  });
+  const radio = typeFilter.querySelector(`input[value="${typeFilterValue}"]`);
+  if (radio) radio.checked = true;
+  $('testAllBtn').textContent = typeFilterValue === 'all' ? '▶ 全部检测' : '▶ 检测本组';
+  updateCopyBtn();
+  updateStats();
+}
+typeFilter.addEventListener('change', e => {
+  if (e.target.name !== 'typeFilter') return;
+  typeFilterValue = e.target.value;
+  localStorage.setItem('ghp_filter', typeFilterValue);
+  applyTypeFilter();
 });
 
 /* ---------- 主题切换：跟随浏览器 → 暗 → 亮 循环 ---------- */
@@ -810,6 +963,7 @@ targetInput.value = localStorage.getItem('ghp_target') || DEFAULT_TARGET;
 speedInput.value = localStorage.getItem('ghp_speed') || DEFAULT_SPEED_TARGET;
 updateStats();
 reorderRows();
+applyTypeFilter();
 if (ghUrlInput.value) refreshConvert(); // 浏览器刷新后可能恢复了输入内容
 
 window.addEventListener('load', () => setTimeout(testAll, 300));

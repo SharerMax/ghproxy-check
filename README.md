@@ -17,6 +17,7 @@
 - **链接加速转换**：粘贴任意 GitHub 链接（releases / raw / archive / blob / gist 等），按延迟排序生成可用节点的加速链接
 - **一键复制**：按当前排序复制所有「可用」节点前缀
 - **排序与持久化**：默认顺序 / 按延迟排序；检测目标、测速文件、排序、主题均存入 localStorage
+- **分组过滤**：单选按钮按分组筛选列表（全部 / 前缀型 / 替换型 / 其它），检测与「复制可用」跟随当前过滤（过滤到具体分组时为「检测本组」）
 - **亮 / 暗 / 跟随浏览器** 三态主题切换，防首帧闪烁
 
 ## 🔍 检测原理
@@ -42,7 +43,7 @@ python -m http.server 8642
 # 访问 http://127.0.0.1:8642
 ```
 
-## 📡 内置节点（27 个）
+## 📡 内置节点（33 个）
 
 <details>
 <summary>展开节点列表</summary>
@@ -64,11 +65,20 @@ python -m http.server 8642
 | 11 | `https://gh.zwy.one/` | 25 | `https://github.xxlab.tech/` |
 | 12 | `https://wget.la/` | 26 | `https://gh.sixyin.com/` |
 | 13 | `https://gh.dpik.top/` | 27 | `https://gh.ddlc.top/` |
-| 14 | `https://github.ednovas.xyz/` | | |
+| 14 | `https://github.ednovas.xyz/` | 28 | `https://ghpxy.hwinzniej.top/` |
+| 29 | `https://cdn.gh-proxy.org/` | 30 | `https://edgeone.gh-proxy.org/` |
+| 31 | `https://cdn.crashmc.com/` | 32 | `https://ghproxy.it/` |
+| 33 | `https://xget.xi-xu.me/gh/` | | |
 
 </details>
 
-节点收录自社区公开汇总（如 [hunshcn/gh-proxy#116](https://github.com/hunshcn/gh-proxy/issues/116)）并经连通性与内容双重核验。公共节点时效性强，如需增删请编辑 `index.html` 中的 `SERVICES` 数组。
+**节点分组**（页面按此分组展示，组内按延迟排序）：
+
+- **GhProxy 前缀型**（#1–32）：在原链接前加前缀，即 `前缀 + 完整 GitHub 链接`
+- **域名替换型**（#33 `xget.xi-xu.me/gh`）：把 `github.com` 替换为镜像域名（如 `xget.xi-xu.me/gh/owner/repo/...`），raw 链接页面会自动转换
+- **其它**：非上述两种用法的节点（当前为空，新增时自动归入）
+
+节点收录自社区公开汇总（如 [hunshcn/gh-proxy#116](https://github.com/hunshcn/gh-proxy/issues/116)、[XIU2/UserScript 内置站点列表](https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js)）并经连通性与内容双重核验。公共节点时效性强，如需增删请编辑 `index.html` 中的 `SERVICES` 数组；非前缀型节点需同时在 `NODE_TYPES` 中标注类型，未标注默认归入前缀型。
 
 ## ⚠️ 免责声明
 
